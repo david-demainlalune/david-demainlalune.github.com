@@ -13,11 +13,11 @@ Fizz-buzz came back to my attention while reading a [post](http://www.globalnerd
 
 I started looking at Clojure a couple of weeks age. It's actually the first Lisp Like language I took a real interest in. My previous attempts, scheme and common lisp, were short lived. I would systematically choke on the avalanche of parenthesis. 
 
-Clojure is in a sense more approachable. A small typographical decision is key here. The language employs a Vector datastructure which is defined by a pair square brackets. This gives a rythm to Clojure lines which make them easier to parse, at least for me.
+Clojure is in a sense more approachable in terms of readability. A small typographical decision helps a lot. The language employs a Vector datastructure which is defined by a pair square brackets. This gives a certain rythm to Clojure lines which make them easier to parse, at least for me.
 
-Lisps and REPLS go hand in hand. I started playing with Chris Granger's [lighttable](http://www.chris-granger.com/2012/04/12/light-table---a-new-ide-concept/) which is modern reintepretation of the REPL. It brings live coding to the game. In other words, the code you write is continuously evaled on the right pane of the editor. You get the explorability of the repl with the comfort of a text editor with no back and forth.
+Lisps and REPLS go hand in hand. I started playing with Chris Granger's [lighttable](http://www.chris-granger.com/2012/04/12/light-table---a-new-ide-concept/) which brings a modern touch to the REPL idea. It mixes in live coding. In other words, the code you write is continuously evaled on the right pane of the editor. You get the explorability of the repl with the comfort of a text editor with no back and forth.
 
-So following is my first naive pass at the test. Building this in LightTable was lots of fun. The instantaneous feedback makes it a great learning tool.
+So let's get back to fizzbuzz. Following is a first naive pass at the exercise. Building this in LightTable was lots of fun. The instantaneous feedback makes it a great learning tool.
 
 ``` clojure
 
