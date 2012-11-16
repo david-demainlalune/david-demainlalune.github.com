@@ -1,0 +1,38 @@
+---
+layout: post
+title: "(fizz buzz)"
+date: 2012-11-16 11:39
+comments: true
+categories: 
+---
+
+Fizz-buzz and Clojure. The first sounds funny, the second is fun.
+
+Fizz-buzz came back to my attention while reading a [post](http://www.globalnerdy.com/2012/11/15/fizzbuzz-still-works/) describing its use as a job interview test. It made me think it would be a fun exercise to implement in Clojure.
+
+
+I started looking at Clojure a couple of weeks age. It's actually the first Lisp Like language I took a real interest in. My previous attempts, scheme and common lisp, were short lived. I would systematically choke on the avalanche of parenthesis. 
+
+Clojure is in a sense more approachable. A small typographical decision is key here. The language employs a Vector datastructure which is defined by a pair square brackets. This gives a rythm to Clojure lines which make them easier to parse, at least for me.
+
+Lisps and REPLS go hand in hand. I started playing with Chris Granger's [lighttable](http://www.chris-granger.com/2012/04/12/light-table---a-new-ide-concept/) which is modern reintepretation of the REPL. It brings live coding to the game. In other words, the code you write is continuously evaled on the right pane of the editor. You get the explorability of the repl with the comfort of a text editor with no back and forth.
+
+So following is my first naive pass at the test. Building this in LightTable was lots of fun. The instantaneous feedback makes it a great learning tool.
+
+``` clojure
+
+(doseq [n (range 1 101)]
+    (let [n-is-fizz (= 0 (rem n 3))
+          n-is-buzz (= 0 (rem n 5))
+          n-is-fizz-buzz (and n-is-fizz n-is-buzz)]
+        (cond
+            n-is-fizz-buzz (println "fizzbuzz")
+            n-is-fizz (println "fizz")
+            n-is-buzz (println "buzz")
+        :else
+            (println n))))
+```
+
+I am sure there are ways of making this shorter and more idiomatic. For instance, i found this [implementation](http://alan.dipert.org/post/172774481/fizzbuzz-in-scala-and-clojure) that uses a pattern matching library. 
+
+I will probably revisit this when I have a better understanding of the language.
