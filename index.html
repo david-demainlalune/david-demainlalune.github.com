@@ -9,7 +9,7 @@
   <meta name="author" content="David Hodgetts">
 
   
-  <meta name="description" content="Fizz-buzz and Clojure. The first sounds funny, the second is fun. Fizz-buzz came back to my attention while reading a post describing its use as a &hellip;">
+  <meta name="description" content="I have encountered a beautiful species of functional composition in my travels in the lands of clojure. My guide book, the excellent joy of clojure, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +64,227 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/27/fnth-is-beautiful/">Fnth Is Beautiful</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-27T14:50:00+01:00" pubdate data-updated="true">Nov 27<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I have encountered a beautiful species of functional composition in my travels in the lands of clojure. My guide book, the excellent <a href="http://joyofclojure.com/">joy of clojure</a>, named it fnth.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="c1">; cf the joy of clojure -&gt; p.127</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="k">def </span><span class="nv">fnth</span> <span class="p">[</span><span class="nv">n</span><span class="p">]</span>
+</span><span class='line'>     <span class="p">(</span><span class="nb">apply </span><span class="nv">comp</span>
+</span><span class='line'>          <span class="p">(</span><span class="nb">cons </span><span class="nv">first</span>
+</span><span class='line'>            <span class="p">(</span><span class="nb">take </span><span class="p">(</span><span class="nb">dec </span><span class="nv">n</span><span class="p">)</span> <span class="p">(</span><span class="nb">repeat </span><span class="nv">rest</span><span class="p">)))))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This function returns a function that returns the value of the nth element of a collection.
+For instance, let&#8217;s find the second element of the vector [1 2 3]:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">((</span><span class="nf">fnth</span> <span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">=&gt;</span> <span class="mi">2</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We should note that Clojure has plenty of ways of getting elements out of vectors. Fnth is just an excuse to enjoy the functional nature of the language.</p>
+
+<p>Let&#8217;s decompose fnth to admire its inner beauty.</p>
+
+<p>First (sic), we must know of &#8220;first&#8221; and &#8220;rest&#8221;. &#8220;first&#8221; gives us the first element of a list. &#8220;rest&#8221; gives us the rest of the list, generally speaking another list (I happily ignore some clojure specifics here). These essential commands allow us to access the second element of our vector in the following fashion:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="nb">first </span><span class="p">(</span><span class="nb">rest </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; inner form</span>
+</span><span class='line'><span class="p">(</span><span class="nb">rest </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+</span><span class='line'><span class="nv">=&gt;</span> <span class="p">[</span><span class="mi">2</span> <span class="mi">3</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; outer form</span>
+</span><span class='line'><span class="p">(</span><span class="nb">first </span><span class="p">[</span><span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+</span><span class='line'><span class="nv">=&gt;</span> <span class="mi">2</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&#8217;s now look at the innermost form of fnth -> (take (dec n) (repeat rest))</p>
+
+<p>(dec n) is easy. &#8220;dec&#8221; returns the value of its argument minus one.</p>
+
+<p>(repeat rest) returns an infinite list of &#8220;rest&#8221; functions. Functions are first class citizens: just like any value they can be stored in a list. &#8220;repeat&#8221; just gives us an unending stream of whatever its argument is.
+For instance:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="nb">take </span><span class="mi">3</span> <span class="p">(</span><span class="nb">repeat </span><span class="mi">5</span><span class="p">))</span>
+</span><span class='line'><span class="nv">=&gt;</span> <span class="p">(</span><span class="mi">5</span> <span class="mi">5</span> <span class="mi">5</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We can&#8217;t really consume an infinite list, so we limit ourselves and &#8220;take&#8221; only what we need.
+Back to the inner form of fnth, assuming n = 2:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="c1">; for n = 2</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="nb">take </span><span class="mi">1</span> <span class="p">(</span><span class="nb">repeat </span><span class="nv">rest</span><span class="p">))</span>
+</span><span class='line'><span class="nv">=&gt;</span> <span class="p">(</span><span class="nb">list </span><span class="nv">rest</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This gives us a list of (n-1) rest functions.</p>
+
+<p>The next step (cons first &#8230;) appends the &#8220;first&#8221; function to the list.
+we now have a list with &#8220;first&#8221; and (n-1) &#8220;rests&#8221;.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="c1">; for n = 2</span>
+</span><span class='line'><span class="p">(</span><span class="nb">apply comp </span><span class="p">(</span><span class="nb">list first </span><span class="nv">rest</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; for n = 3</span>
+</span><span class='line'><span class="p">(</span><span class="nb">apply comp </span><span class="p">(</span><span class="nb">list first rest </span><span class="nv">rest</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; etc...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>&#8220;apply&#8221; takes a function and a list. It extracts the elements of the list and feeds them as arguments to the function.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="nb">apply + </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+</span><span class='line'><span class="nv">=&gt;</span> <span class="mi">6</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>comp takes a set of functions and returns a composed function. Function composition generally helps readability. An example:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="p">(</span><span class="nb">first </span><span class="p">(</span><span class="nb">rest </span><span class="p">(</span><span class="nb">rest </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; with comp the intent is clearer</span>
+</span><span class='line'><span class="p">((</span><span class="nb">comp first rest </span><span class="nv">rest</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We now have all the elements to deconstruct fnth.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="c1">; we assume n = 2</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="k">def </span><span class="nv">fnth</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</span><span class='line'>     <span class="p">(</span><span class="nb">apply </span><span class="nv">comp</span>
+</span><span class='line'>          <span class="p">(</span><span class="nb">cons </span><span class="nv">first</span>
+</span><span class='line'>            <span class="p">(</span><span class="nb">take </span><span class="p">(</span><span class="nb">dec </span><span class="mi">2</span><span class="p">)</span> <span class="p">(</span><span class="nb">repeat </span><span class="nv">rest</span><span class="p">)))))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; simplify</span>
+</span><span class='line'><span class="p">(</span><span class="nb">apply </span><span class="nv">comp</span>
+</span><span class='line'>       <span class="p">(</span><span class="nb">cons </span><span class="nv">first</span>
+</span><span class='line'>               <span class="p">(</span><span class="nb">take </span><span class="mi">1</span> <span class="p">(</span><span class="nb">repeat </span><span class="nv">rest</span><span class="p">))))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; simplify</span>
+</span><span class='line'><span class="p">(</span><span class="nb">apply comp </span><span class="p">(</span><span class="nb">cons </span><span class="nv">first</span>
+</span><span class='line'>                    <span class="p">(</span><span class="nb">list </span><span class="nv">rest</span><span class="p">)))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; simplify</span>
+</span><span class='line'><span class="p">(</span><span class="nb">apply comp </span><span class="p">(</span><span class="nb">list first </span><span class="nv">rest</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; done </span>
+</span><span class='line'><span class="p">(</span><span class="nb">comp first </span><span class="nv">rest</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">; apply to arguments for test</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">((</span><span class="nb">comp first </span><span class="nv">rest</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+</span><span class='line'><span class="nv">=&gt;</span> <span class="mi">2</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>One may argue that the example is maybe a bit silly in terms of everyday use. Nevertheless I find it&#8217;s a beautiful example of functional elegance.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -149,6 +370,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/11/27/fnth-is-beautiful/">fnth is beautiful</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2012/11/16/fizz-buzz/">(fizz buzz)</a>
