@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>clojure private repositories and lein plugins - Software as Soap Bubble</title>
+  <meta name="author" content="David Hodgetts">
+
+  
+  <meta name="description" content="A quick post for the puzzled me in the future. I am writing a simple leiningen plugin which given a fully qualified module name generates the &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://david-demainlalune.github.com/blog/2013/08/07/clojure-private-repositories-and-lein-plugins/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Software as Soap Bubble" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Software as Soap Bubble</a></h1>
+  
+    <h2>a journal of fragile programming</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:david-demainlalune.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Clojure Private Repositories and Lein Plugins</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-07T16:07:00+02:00" pubdate data-updated="true">Aug 7<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>A quick post for the puzzled me in the future.</p>
+
+<p>I am writing a simple leiningen plugin which given a fully qualified module name generates the corresponding source and test files. I am thinking that having a test file automatically generated for me will guilt-trip me into actually writing them.</p>
+
+<p>Given the nature of the task, I would like this plugin to be a system wide command. I found out I could do this by specifying a user profile in ~/.lein/profiles.clj</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="c1">; ~/.lein/profiles.clj</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">{</span><span class="ss">:user</span> <span class="p">{</span><span class="ss">:plugins</span> <span class="p">[[</span><span class="nv">lein-gen-src</span> <span class="s">&quot;0.1.0-SNAPSHOT&quot;</span><span class="p">]]}}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This works&#8230; if you actually publish the plugin to clojars. This is not my case. The plugin is being developed locally. So how can I make this work?</p>
+
+<p>(A word of warning, we are entering cargo cult territory for me: the magical land of java maven and pom files. In other words there is probably a better way of doing this.)</p>
+
+<p>In ~/.lein/profiles.clj you can specify a :deploy-repositories attribute as being internal and pointing to a directory of static files.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="c1">; ~/.lein/profiles.clj</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">{</span><span class="ss">:user</span> <span class="p">{</span><span class="ss">:plugins</span> <span class="p">[[</span><span class="nv">lein-gen-src</span> <span class="s">&quot;0.1.0-SNAPSHOT&quot;</span><span class="p">]]</span>
+</span><span class='line'>      <span class="ss">:deploy-repositories</span> <span class="p">[[</span><span class="s">&quot;internal&quot;</span> <span class="s">&quot;file:///I:/clojure/internal_repositories&quot;</span><span class="p">]]}}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The &#8220;internal_repositories&#8221; folder is then filled with the files produced by the &#8220;lein install&#8221; command (a .jar and a pom.xml). And lo and behold, it works.</p>
+
+<p>Of course, now I have to write a new task to copy the built plugin over to the &#8220;internal_repositories&#8221; when new versions are available.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">David Hodgetts</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-07T16:07:00+02:00" pubdate data-updated="true">Aug 7<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://david-demainlalune.github.com/blog/2013/08/07/clojure-private-repositories-and-lein-plugins/" data-via="David_Hodgetts" data-counturl="http://david-demainlalune.github.com/blog/2013/08/07/clojure-private-repositories-and-lein-plugins/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/11/27/fnth-is-beautiful/" title="Previous Post: fnth is beautiful">&laquo; fnth is beautiful</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/07/clojure-private-repositories-and-lein-plugins/">clojure private repositories and lein plugins</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/27/fnth-is-beautiful/">fnth is beautiful</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/11/16/fizz-buzz/">(fizz buzz)</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("David_Hodgetts", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/David_Hodgetts" class="twitter-follow-button" data-show-count="false">Follow @David_Hodgetts</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - David Hodgetts -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <title><![CDATA[Software as Soap Bubble]]></title>
   <link href="http://david-demainlalune.github.com/atom.xml" rel="self"/>
   <link href="http://david-demainlalune.github.com/"/>
-  <updated>2012-11-27T16:54:15+01:00</updated>
+  <updated>2013-08-07T16:54:23+02:00</updated>
   <id>http://david-demainlalune.github.com/</id>
   <author>
     <name><![CDATA[David Hodgetts]]></name>
@@ -12,6 +12,49 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[clojure private repositories and lein plugins]]></title>
+    <link href="http://david-demainlalune.github.com/blog/2013/08/07/clojure-private-repositories-and-lein-plugins/"/>
+    <updated>2013-08-07T16:07:00+02:00</updated>
+    <id>http://david-demainlalune.github.com/blog/2013/08/07/clojure-private-repositories-and-lein-plugins</id>
+    <content type="html"><![CDATA[<p>A quick post for the puzzled me in the future.</p>
+
+<p>I am writing a simple leiningen plugin which given a fully qualified module name generates the corresponding source and test files. I am thinking that having a test file automatically generated for me will guilt-trip me into actually writing them.</p>
+
+<p>Given the nature of the task, I would like this plugin to be a system wide command. I found out I could do this by specifying a user profile in ~/.lein/profiles.clj</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="c1">; ~/.lein/profiles.clj</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">{</span><span class="ss">:user</span> <span class="p">{</span><span class="ss">:plugins</span> <span class="p">[[</span><span class="nv">lein-gen-src</span> <span class="s">&quot;0.1.0-SNAPSHOT&quot;</span><span class="p">]]}}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This works&#8230; if you actually publish the plugin to clojars. This is not my case. The plugin is being developed locally. So how can I make this work?</p>
+
+<p>(A word of warning, we are entering cargo cult territory for me: the magical land of java maven and pom files. In other words there is probably a better way of doing this.)</p>
+
+<p>In ~/.lein/profiles.clj you can specify a :deploy-repositories attribute as being internal and pointing to a directory of static files.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='clojure'><span class='line'><span class="c1">; ~/.lein/profiles.clj</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">{</span><span class="ss">:user</span> <span class="p">{</span><span class="ss">:plugins</span> <span class="p">[[</span><span class="nv">lein-gen-src</span> <span class="s">&quot;0.1.0-SNAPSHOT&quot;</span><span class="p">]]</span>
+</span><span class='line'>      <span class="ss">:deploy-repositories</span> <span class="p">[[</span><span class="s">&quot;internal&quot;</span> <span class="s">&quot;file:///I:/clojure/internal_repositories&quot;</span><span class="p">]]}}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The &#8220;internal_repositories&#8221; folder is then filled with the files produced by the &#8220;lein install&#8221; command (a .jar and a pom.xml). And lo and behold, it works.</p>
+
+<p>Of course, now I have to write a new task to copy the built plugin over to the &#8220;internal_repositories&#8221; when new versions are available.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[fnth is beautiful]]></title>
